@@ -13,6 +13,7 @@ Future<User?> userAuth(String email, String password) async {
 
   try {
     final res = await http.post(url, body: body);
+    print(res.statusCode);
 
     if (res.statusCode == 200) {
       final json = jsonDecode(res.body);
@@ -71,40 +72,34 @@ Future<User?> registerUser(
     String email,
     String username,
     String firstName,
-    String LastName,
+    String lastName,
     String password,
     String confirmPassword,
-
     ) async {
   final data = {
     "email": email,
     "username": username,
     "first_name": firstName,
-    "last_name":LastName,
+    "last_name": lastName,
     "password1": password,
-    "password2":confirmPassword,
-
-
+    "password2": confirmPassword,
   };
 
   final url = Uri.parse("http://$baseurl/app1/auth/registration/");
 
   try {
     final res = await http.post(url, body: data);
-    print(res.statusCode);
+    print("Registration response status code: ${res.statusCode}");
 
-    if ( res.statusCode == 201||res.statusCode==200) {
+    if (res.statusCode == 201 || res.statusCode == 200) {
       final json = jsonDecode(res.body);
-      if (json.containsKey('key')) {
+      print("Registration response JSON: $json");
 
-        String token = json['key'];
-        print(token);
-        final box = await Hive.openBox(tokenBox);
-        box.put("token", token);
-        return getUser(token);
-      } else {
-        return null;
-      }
+      final token = json["token"]; // Access token directly
+      final box = await Hive.openBox(tokenBox);
+      box.put("token", token);
+      final user = await getUser(token);
+      return user;
     } else {
       print("Registration failed with status code: ${res.statusCode}");
       print("Response body: ${res.body}");
@@ -115,5 +110,3 @@ Future<User?> registerUser(
     return null;
   }
 }
-
-

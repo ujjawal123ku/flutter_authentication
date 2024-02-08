@@ -1,10 +1,10 @@
-import 'package:authentication/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:authentication/auth_api.dart';
 import '../model/UserCubit.dart';
 import '../model/usermodel.dart';
 import 'home.dart';
+import 'login.dart'; // assuming you have a login page defined
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -190,16 +190,11 @@ class _RegisterState extends State<Register> {
                         _confirmPassword.text,
                       );
 
-
                       print("Auth result: $result");
-                      if (result.runtimeType==User) {
-                        User? user = result;
-                        context.read<UserCubit>().emit(user!);
-                        // Navigate to the home page if registration is successful
+                      if (result != null) {
+                        context.read<UserCubit>().emit(result);
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) {
-                            return MyHomePage();
-                          }),
+                          MaterialPageRoute(builder: (context) => MyHomePage()),
                         );
                       } else {
                         // Show an error message if registration fails
@@ -227,14 +222,15 @@ class _RegisterState extends State<Register> {
                 padding: EdgeInsets.only(left: 30,right: 30,top: 20),
                 child: Row(
                   children: [
-                    Text("Already Register===>",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),),
+                    Text("Already Registered? ",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),),
                     InkWell(
                       onTap: (){
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => LogIn()),);
+                          MaterialPageRoute(builder: (context) => LogIn()),
+                        );
                       },
-                      child: Text("LogIn",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 20,color: Colors.green),),
+                      child: Text("Log In",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 20,color: Colors.green),),
                     )
                   ],
                 ),
